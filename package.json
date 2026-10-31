@@ -1,0 +1,27 @@
+{
+  "name": "uraan-e-pakistan",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A truck-art inspired Flappy Bird adventure through Pakistan.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@fontsource/baloo-2": "^5.2.5",
+    "@fontsource/noto-nastaliq-urdu": "^5.3.0",
+    "@fontsource/nunito": "^5.2.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.4.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  }
+}

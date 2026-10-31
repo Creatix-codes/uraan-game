@@ -1,0 +1,9 @@
+@import './base.css';
+@import './shell.css';
+@import './components.css';
+@import './home.css';
+@import './map.css';
+@import './game.css';
+@import './victory.css';
+@import './settings.css';
+@import './responsive.css';
