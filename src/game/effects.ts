@@ -1,6 +1,16 @@
 import type { LevelConfig } from '../types';
 
-export type ParticleKind = 'spark' | 'petal' | 'feather' | 'confetti' | 'dust';
+export interface FloatingText {
+  x: number;
+  y: number;
+  life: number;
+  maxLife: number;
+  text: string;
+  color: string;
+  size: number;
+}
+
+export type ParticleKind = 'spark' | 'petal' | 'feather' | 'confetti' | 'dust' | 'flame';
 
 export interface Particle {
   x: number;
@@ -17,17 +27,8 @@ export interface Particle {
   kind: ParticleKind;
 }
 
-export interface FloatingText {
-  x: number;
-  y: number;
-  life: number;
-  maxLife: number;
-  text: string;
-  color: string;
-  size: number;
-}
-
 const TAU = Math.PI * 2;
+const MAX_PARTICLES = 90;
 
 function rand(min: number, max: number): number {
   return min + Math.random() * (max - min);
@@ -146,6 +147,35 @@ export function makeConfetti(
   return confetti;
 }
 
+export function makeFlameTrail(
+  x: number,
+  y: number,
+  scale: number,
+  level: LevelConfig,
+): Particle[] {
+  const colors = [level.palette.accent, '#ff8c42', '#ffd166', '#ff5e3a'];
+  const flames: Particle[] = [];
+  for (let i = 0; i < 4; i += 1) {
+    const angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.9;
+    const speed = (60 + Math.random() * 70) * scale;
+    flames.push({
+      x: x + (Math.random() - 0.5) * 8 * scale,
+      y: y - 2 * scale,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 40 * scale,
+      gravity: 60 * scale,
+      life: 0.35 + Math.random() * 0.25,
+      maxLife: 0.6,
+      size: (4 + Math.random() * 3) * scale,
+      color: colors[i % colors.length],
+      rotation: 0,
+      spin: 0,
+      kind: 'flame',
+    });
+  }
+  return flames;
+}
+
 export function updateParticles(particles: Particle[], dt: number): void {
   for (let i = particles.length - 1; i >= 0; i -= 1) {
     const particle = particles[i];
@@ -156,6 +186,39 @@ export function updateParticles(particles: Particle[], dt: number): void {
     particle.life -= dt;
     if (particle.life <= 0) particles.splice(i, 1);
   }
+  if (particles.length > MAX_PARTICLES) particles.splice(0, particles.length - MAX_PARTICLES);
+}
+
+export function drawFlame(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  size: number,
+  tilt: number,
+  energy: number,
+): void {
+  const flicker = 0.75 + Math.sin(Date.now() % 1000 / 90) * 0.12;
+  const length = size * (1.5 + energy * 0.9) * (0.85 + flicker * 0.3);
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(tilt);
+  ctx.globalAlpha = 0.85;
+  ctx.fillStyle = '#ff8c42';
+  ctx.beginPath();
+  ctx.moveTo(0, -length);
+  ctx.quadraticCurveTo(length * 0.45, -length * 0.35, 0, -length * 0.15);
+  ctx.quadraticCurveTo(-length * 0.45, -length * 0.35, 0, -length);
+  ctx.closePath();
+  ctx.fill();
+  ctx.globalAlpha = 0.9;
+  ctx.fillStyle = '#ffd166';
+  ctx.beginPath();
+  ctx.moveTo(0, -length * 0.82);
+  ctx.quadraticCurveTo(length * 0.32, -length * 0.42, 0, -length * 0.42);
+  ctx.quadraticCurveTo(-length * 0.32, -length * 0.42, 0, -length * 0.82);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 }
 
 export function drawParticles(
@@ -172,7 +235,16 @@ export function drawParticles(
     ctx.rotate(particle.rotation);
     ctx.fillStyle = particle.color;
 
-    if (particle.kind === 'confetti') {
+    if (particle.kind === 'flame') {
+      const f = particle.size * 2.4;
+      ctx.beginPath();
+      ctx.moveTo(0, -f);
+      ctx.quadraticCurveTo(f * 0.45, -f * 0.35, 0, -f * 0.12);
+      ctx.quadraticCurveTo(-f * 0.45, -f * 0.35, 0, -f);
+      ctx.closePath();
+      ctx.fillStyle = particle.color;
+      ctx.fill();
+    } else if (particle.kind === 'confetti') {
       ctx.fillRect(-particle.size * 0.35, -particle.size * 0.8, particle.size * 0.7, particle.size * 1.6);
     } else if (particle.kind === 'feather') {
       ctx.beginPath();

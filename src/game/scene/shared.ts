@@ -7,6 +7,23 @@ export const mod = (value: number, length: number): number => ((value % length) 
 export const clamp = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
 
+/** Memoized canvas gradients — see `src/game/gradients.ts`. */
+export type SceneGradientCache = Map<string, CanvasGradient>;
+
+/** Fetch a cached gradient for this scene, building and caching on first use. */
+export function sceneGradient(
+  c: SceneContext,
+  key: string,
+  build: () => CanvasGradient,
+): CanvasGradient {
+  let gradient = c.gradients.get(key);
+  if (!gradient) {
+    gradient = build();
+    c.gradients.set(key, gradient);
+  }
+  return gradient;
+}
+
 /** Deterministic 0..1 pseudo-random value, useful for repeatable scenery. */
 export const hash = (seed: number): number => {
   const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453123;
@@ -25,6 +42,8 @@ export interface SceneContext {
   scroll: number;
   time: number;
   reducedMotion: boolean;
+  lowFx: boolean;
+  gradients: SceneGradientCache;
 }
 
 export type CloudSpec = readonly [x: number, y: number, size: number, alpha: number, drift?: number];
@@ -90,10 +109,13 @@ export function fillCircle(
 
 export function drawSky(c: SceneContext, top = c.palette.skyTop, bottom = c.palette.skyBottom): void {
   const { ctx } = c;
-  const gradient = ctx.createLinearGradient(0, 0, 0, c.playableH);
-  gradient.addColorStop(0, top);
-  gradient.addColorStop(0.62, bottom);
-  gradient.addColorStop(1, c.palette.haze);
+  const gradient = sceneGradient(c, `sky|${top}|${bottom}|${Math.round(c.playableH)}`, () => {
+    const g = ctx.createLinearGradient(0, 0, 0, c.playableH);
+    g.addColorStop(0, top);
+    g.addColorStop(0.62, bottom);
+    g.addColorStop(1, c.palette.haze);
+    return g;
+  });
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, c.w, c.h);
 }
@@ -215,10 +237,17 @@ export function drawRidge(
 
 export function drawHaze(c: SceneContext, y: number, height: number, alpha = 0.35): void {
   const { ctx, palette } = c;
-  const gradient = ctx.createLinearGradient(0, y - height / 2, 0, y + height / 2);
-  gradient.addColorStop(0, 'rgba(255,255,255,0)');
-  gradient.addColorStop(0.5, palette.haze);
-  gradient.addColorStop(1, 'rgba(255,255,255,0)');
+  const gradient = sceneGradient(
+    c,
+    `haze|${y.toFixed(1)}|${height.toFixed(1)}|${alpha.toFixed(2)}`,
+    () => {
+      const g = ctx.createLinearGradient(0, y - height / 2, 0, y + height / 2);
+      g.addColorStop(0, 'rgba(255,255,255,0)');
+      g.addColorStop(0.5, palette.haze);
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      return g;
+    },
+  );
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.fillStyle = gradient;
@@ -475,9 +504,16 @@ export function drawPineRow(
 export function drawGround(c: SceneContext, style: GroundStyle): void {
   const { ctx, palette, w, h, s, groundY } = c;
   const groundH = h - groundY;
-  const gradient = ctx.createLinearGradient(0, groundY, 0, h);
-  gradient.addColorStop(0, palette.groundTop);
-  gradient.addColorStop(1, palette.groundBottom);
+  const gradient = sceneGradient(
+    c,
+    `ground|${palette.groundTop}|${palette.groundBottom}|${Math.round(h)}`,
+    () => {
+      const g = ctx.createLinearGradient(0, groundY, 0, h);
+      g.addColorStop(0, palette.groundTop);
+      g.addColorStop(1, palette.groundBottom);
+      return g;
+    },
+  );
   ctx.fillStyle = gradient;
   ctx.fillRect(0, groundY, w, groundH);
 
@@ -604,9 +640,12 @@ export function drawGround(c: SceneContext, style: GroundStyle): void {
   }
   ctx.restore();
 
-  const shade = ctx.createLinearGradient(0, h - 24 * s, 0, h);
-  shade.addColorStop(0, 'rgba(20,30,24,0)');
-  shade.addColorStop(1, 'rgba(20,30,24,0.28)');
+  const shade = sceneGradient(c, `shade|${Math.round(h)}|${Math.round(s)}`, () => {
+    const g = ctx.createLinearGradient(0, h - 24 * s, 0, h);
+    g.addColorStop(0, 'rgba(20,30,24,0)');
+    g.addColorStop(1, 'rgba(20,30,24,0.28)');
+    return g;
+  });
   ctx.fillStyle = shade;
   ctx.fillRect(0, h - 24 * s, w, 24 * s);
 }

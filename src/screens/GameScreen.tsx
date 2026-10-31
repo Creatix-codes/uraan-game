@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import { audio } from '../audio/audioManager';
+import { GameHud } from '../components/GameHud';
 import { Icon } from '../components/Icon';
-import { IconButton, PaintedButton } from '../components/Buttons';
-import { HeartRow, StarRating } from '../components/Ornaments';
+import { PaintedButton } from '../components/Buttons';
+import { StarRating } from '../components/Ornaments';
 import { GameEngine } from '../game/engine';
 import type { EnginePhase, HudState, RunResult } from '../game/engine';
 import type { LevelConfig } from '../types';
@@ -225,7 +226,6 @@ export function GameScreen({
   }, [paused, defeatOpen, arrived, tutorialOpen, fatalError]);
 
   const phase: EnginePhase = hud.phase;
-  const liveScore = hud.distance + hud.stars * 35;
   const readyVisible = phase === 'ready' && !paused && !defeatOpen && !arrived && !fatalError;
   const playingHint = phase === 'playing' && !paused;
 
@@ -243,62 +243,7 @@ export function GameScreen({
         <div className="game-shade game-shade--top" aria-hidden="true" />
         <div className="game-shade game-shade--bottom" aria-hidden="true" />
 
-        <div className="game-hud" data-ui="true">
-          <div className="game-hud__top">
-            <IconButton
-              icon="pause"
-              label="Pause the flight"
-              variant="cream"
-              size="sm"
-              onClick={pauseGame}
-              disabled={phase !== 'playing' || paused || arrived}
-            />
-            <div className="game-hud__level">
-              <span className="game-hud__level-number">{String(level.id).padStart(2, '0')}</span>
-              <span className="game-hud__level-copy">
-                <strong>{level.city}</strong>
-                <small>{level.region}</small>
-              </span>
-            </div>
-            <div className="game-hud__hearts">
-              <HeartRow hearts={hud.hearts} size={19} />
-            </div>
-          </div>
-
-          <div className="game-hud__journey">
-            <div className="journey-heading">
-              <span>
-                <Icon name="flag" size={12} strokeWidth={2} />
-                {Math.min(hud.distance, level.lengthMeters)} / {level.lengthMeters} m
-              </span>
-              <span className="journey-stars">
-                <span className="journey-stars__star" aria-hidden="true">
-                  <Icon name="star" size={12} strokeWidth={2.2} />
-                </span>
-                {hud.stars} stars
-                <span className="journey-score">{liveScore} pts</span>
-              </span>
-            </div>
-            <div
-              className="journey-track"
-              role="progressbar"
-              aria-label="Flight progress"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={Math.round(hud.progress * 100)}
-            >
-              <span className="journey-track__fill" style={{ width: `${Math.max(2, hud.progress * 100)}%` }} />
-              <span
-                className="journey-track__marker"
-                style={{ left: `${Math.max(2, hud.progress * 100)}%` }}
-                aria-hidden="true"
-              >
-                <Icon name="wind" size={11} strokeWidth={2.4} />
-              </span>
-              <span className="journey-track__post" aria-hidden="true" />
-            </div>
-          </div>
-        </div>
+        <GameHud hud={hud} level={level} arrived={arrived} paused={paused} onPause={pauseGame} />
 
         {readyVisible && !tutorialOpen ? (
           <div className="ready-hint" aria-hidden="true">

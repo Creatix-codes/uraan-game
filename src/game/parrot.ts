@@ -1,3 +1,5 @@
+import { cachedGradient } from './gradients';
+
 export interface ParrotDrawOptions {
   x: number;
   y: number;
@@ -29,10 +31,13 @@ export function drawParrot(ctx: CanvasRenderingContext2D, options: ParrotDrawOpt
   const outline = 2.1;
 
   // ---- Tail feathers -------------------------------------------------
-  const tail = ctx.createLinearGradient(-40, 0, -12, 15);
-  tail.addColorStop(0, '#1c8c57');
-  tail.addColorStop(0.6, '#39b96a');
-  tail.addColorStop(1, '#d5e36b');
+  const tail = cachedGradient(ctx, `parrot-tail|k${k.toFixed(3)}`, () => {
+    const g = ctx.createLinearGradient(-40, 0, -12, 15);
+    g.addColorStop(0, '#1c8c57');
+    g.addColorStop(0.6, '#39b96a');
+    g.addColorStop(1, '#d5e36b');
+    return g;
+  });
   ctx.fillStyle = tail;
   ctx.strokeStyle = ink;
   ctx.lineWidth = outline;
@@ -74,10 +79,13 @@ export function drawParrot(ctx: CanvasRenderingContext2D, options: ParrotDrawOpt
   ctx.stroke();
 
   // ---- Body ----------------------------------------------------------
-  const bodyGradient = ctx.createLinearGradient(-16, -12, 15, 18);
-  bodyGradient.addColorStop(0, '#6fd05f');
-  bodyGradient.addColorStop(0.45, '#3fb65f');
-  bodyGradient.addColorStop(1, '#1c8a52');
+  const bodyGradient = cachedGradient(ctx, `parrot-body|k${k.toFixed(3)}`, () => {
+    const g = ctx.createLinearGradient(-16, -12, 15, 18);
+    g.addColorStop(0, '#6fd05f');
+    g.addColorStop(0.45, '#3fb65f');
+    g.addColorStop(1, '#1c8a52');
+    return g;
+  });
   ctx.fillStyle = bodyGradient;
   ctx.strokeStyle = ink;
   ctx.lineWidth = outline + 0.4;
@@ -87,9 +95,12 @@ export function drawParrot(ctx: CanvasRenderingContext2D, options: ParrotDrawOpt
   ctx.stroke();
 
   // Golden belly panel and pattern.
-  const belly = ctx.createLinearGradient(0, 2, 4, 20);
-  belly.addColorStop(0, '#f0e579');
-  belly.addColorStop(1, '#cfd34e');
+  const belly = cachedGradient(ctx, `parrot-belly|k${k.toFixed(3)}`, () => {
+    const g = ctx.createLinearGradient(0, 2, 4, 20);
+    g.addColorStop(0, '#f0e579');
+    g.addColorStop(1, '#cfd34e');
+    return g;
+  });
   ctx.fillStyle = belly;
   ctx.beginPath();
   ctx.ellipse(3, 9, 10.5, 8.4, -0.1, 0, Math.PI * 2);
@@ -105,10 +116,13 @@ export function drawParrot(ctx: CanvasRenderingContext2D, options: ParrotDrawOpt
   }
 
   // ---- Head ----------------------------------------------------------
-  const headGradient = ctx.createRadialGradient(8, -20, 2, 11, -11, 18);
-  headGradient.addColorStop(0, '#86dd69');
-  headGradient.addColorStop(0.7, '#42b95e');
-  headGradient.addColorStop(1, '#279a56');
+  const headGradient = cachedGradient(ctx, `parrot-head|k${k.toFixed(3)}`, () => {
+    const g = ctx.createRadialGradient(8, -20, 2, 11, -11, 18);
+    g.addColorStop(0, '#86dd69');
+    g.addColorStop(0.7, '#42b95e');
+    g.addColorStop(1, '#279a56');
+    return g;
+  });
   ctx.fillStyle = headGradient;
   ctx.strokeStyle = ink;
   ctx.lineWidth = outline + 0.3;
@@ -225,10 +239,13 @@ export function drawParrot(ctx: CanvasRenderingContext2D, options: ParrotDrawOpt
   ctx.save();
   ctx.translate(-3, -1);
   ctx.rotate(wingAngle);
-  const wingGradient = ctx.createLinearGradient(-18, 1, 6, 20);
-  wingGradient.addColorStop(0, '#65cc5b');
-  wingGradient.addColorStop(0.55, '#31a75b');
-  wingGradient.addColorStop(1, '#1c7d4d');
+  const wingGradient = cachedGradient(ctx, `parrot-wing|k${k.toFixed(3)}`, () => {
+    const g = ctx.createLinearGradient(-18, 1, 6, 20);
+    g.addColorStop(0, '#65cc5b');
+    g.addColorStop(0.55, '#31a75b');
+    g.addColorStop(1, '#1c7d4d');
+    return g;
+  });
   ctx.fillStyle = wingGradient;
   ctx.strokeStyle = ink;
   ctx.lineWidth = outline;

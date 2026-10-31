@@ -15,6 +15,7 @@ import {
   fillPolygon,
   hash,
   mod,
+  sceneGradient,
   tiledLandmark,
 } from './shared';
 import {
@@ -148,7 +149,7 @@ export function drawLahoreScene(c: SceneContext): void {
   drawCypressRow(c);
 
   // Drifting marigold petals — small flecks of truck-art colour.
-  if (!c.reducedMotion) {
+  if (!c.reducedMotion && !c.lowFx) {
     for (let i = 0; i < 9; i += 1) {
       const x = mod(i * 41 * s + c.time * (5 + (i % 3) * 2) * s, w + 20 * s);
       const y = mod(i * 57 * s + c.time * (8 + i) * s, playableH * 0.75);
@@ -174,20 +175,33 @@ function drawArabianSea(c: SceneContext): void {
   const { ctx, palette: p } = c;
   const horizon = c.playableH * 0.56;
   const seaHeight = c.playableH - horizon;
-  const gradient = ctx.createLinearGradient(0, horizon, 0, c.playableH);
-  gradient.addColorStop(0, p.far);
-  gradient.addColorStop(0.55, p.midLight);
-  gradient.addColorStop(1, p.mid);
+  const gradient = sceneGradient(
+    c,
+    `sea|${p.far}|${p.midLight}|${p.mid}|${Math.round(horizon)}`,
+    () => {
+      const g = ctx.createLinearGradient(0, horizon, 0, c.playableH);
+      g.addColorStop(0, p.far);
+      g.addColorStop(0.55, p.midLight);
+      g.addColorStop(1, p.mid);
+      return g;
+    },
+  );
   ctx.fillStyle = gradient;
   ctx.fillRect(0, horizon, c.w, seaHeight + 2);
 
   // Sun reflection.
+  const reflection = sceneGradient(
+    c,
+    `sea-reflect|${p.glow}|${Math.round(horizon)}`,
+    () => {
+      const g = ctx.createLinearGradient(0, horizon, 0, c.playableH);
+      g.addColorStop(0, p.glow);
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      return g;
+    },
+  );
   ctx.save();
   ctx.globalAlpha = 0.34;
-  ctx.fillStyle = p.glow;
-  const reflection = ctx.createLinearGradient(0, horizon, 0, c.playableH);
-  reflection.addColorStop(0, p.glow);
-  reflection.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = reflection;
   ctx.beginPath();
   ctx.moveTo(c.w * 0.78 - 4 * c.s, horizon);
@@ -364,7 +378,7 @@ export function drawMohenjoScene(c: SceneContext): void {
   ]);
 
   // Dust motes catching the low sun.
-  if (!c.reducedMotion) {
+  if (!c.reducedMotion && !c.lowFx) {
     ctx.save();
     ctx.globalAlpha = 0.28;
     for (let i = 0; i < 10; i += 1) {
@@ -441,4 +455,27 @@ export function drawIslamabadScene(c: SceneContext): void {
   }
 
   drawGround(c, 'grass');
+}
+
+/* ------------------------------------------------------------------ */
+/* Gwadar                                                              */
+/* ------------------------------------------------------------------ */
+
+export function drawGwadarScene(c: SceneContext): void {
+  const { w, s, playableH } = c;
+  drawSky(c, '#7fc4dd', '#ffd9a8');
+  drawSun(c, w * 0.7, playableH * 0.14, 36 * s, 0.95);
+  drawClouds(c, [
+    [0.12, 0.12, 42, 0.6, 3],
+    [0.45, 0.08, 30, 0.45, 2.6],
+    [0.75, 0.2, 26, 0.34, 4.6],
+  ]);
+  drawHaze(c, playableH * 0.55, 90 * s, 0.3);
+  drawArabianSea(c);
+  drawDatePalm(c, w * 0.12 - mod(c.scroll * 0.28, 80 * s), playableH * 0.85, 95 * s, 0.5);
+  drawBirds(c, [
+    [0.3, 0.2, 3.6, 0.5],
+    [0.66, 0.16, 2.8, 0.4],
+  ]);
+  drawGround(c, 'beach');
 }

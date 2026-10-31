@@ -12,10 +12,12 @@ import {
   drawSky,
   drawSun,
   drawWoodBridge,
+  drawDatePalm,
   fillCircle,
   fillPolygon,
   hash,
   mod,
+  sceneGradient,
   tiledLandmark,
 } from './shared';
 import { drawFairyCabin, drawHunzaFort, drawShangrilaHut, drawSwatChalet } from './landmarksB';
@@ -104,10 +106,17 @@ export function drawSwatScene(c: SceneContext): void {
   });
 
   // The Swat River: a broad turquoise ribbon with a wooden bridge.
-  const riverGradient = ctx.createLinearGradient(0, riverTop, 0, playableH);
-  riverGradient.addColorStop(0, '#7ccdc5');
-  riverGradient.addColorStop(0.42, '#4aa9a6');
-  riverGradient.addColorStop(1, '#2f8587');
+  const riverGradient = sceneGradient(
+    c,
+    `swat-river|${playableH.toFixed(1)}|${Math.round(riverTop)}`,
+    () => {
+      const g = ctx.createLinearGradient(0, riverTop, 0, playableH);
+      g.addColorStop(0, '#7ccdc5');
+      g.addColorStop(0.42, '#4aa9a6');
+      g.addColorStop(1, '#2f8587');
+      return g;
+    },
+  );
   ctx.fillStyle = riverGradient;
   ctx.beginPath();
   ctx.moveTo(-20, riverTop + 8 * s);
@@ -340,10 +349,17 @@ export function drawSkarduScene(c: SceneContext): void {
   drawSnowMountain(c, w * 0.52, playableH * 0.58, s * 0.65);
 
   const lakeTop = playableH * 0.56;
-  const lakeGradient = ctx.createLinearGradient(0, lakeTop, 0, playableH);
-  lakeGradient.addColorStop(0, '#74c1c8');
-  lakeGradient.addColorStop(0.5, '#45a3a8');
-  lakeGradient.addColorStop(1, '#2e7e88');
+  const lakeGradient = sceneGradient(
+    c,
+    `skardu-lake|${playableH.toFixed(1)}|${Math.round(lakeTop)}`,
+    () => {
+      const g = ctx.createLinearGradient(0, lakeTop, 0, playableH);
+      g.addColorStop(0, '#74c1c8');
+      g.addColorStop(0.5, '#45a3a8');
+      g.addColorStop(1, '#2e7e88');
+      return g;
+    },
+  );
   ctx.fillStyle = lakeGradient;
   ctx.fillRect(0, lakeTop, w, playableH - lakeTop + 2);
 
@@ -543,4 +559,38 @@ export function drawFairyMeadowsScene(c: SceneContext): void {
   drawButterfly(c, mod(w * 0.62 + c.time * 10 * s, w), playableH * 0.49, 3.3 * s, 0.7);
 
   drawGround(c, 'meadow');
+}
+
+/* ------------------------------------------------------------------ */
+/* Peshawar                                                            */
+/* ------------------------------------------------------------------ */
+
+export function drawPeshawarScene(c: SceneContext): void {
+  const { palette: p, w, s, playableH } = c;
+  drawSky(c, '#eec27e', '#dd8f5c');
+  drawSun(c, w * 0.3, playableH * 0.16, 40 * s, 0.95);
+  drawClouds(c, [
+    [0.15, 0.12, 44, 0.6, 3],
+    [0.5, 0.08, 34, 0.45, 2.8],
+    [0.8, 0.2, 28, 0.35, 4.5],
+  ]);
+  drawHaze(c, playableH * 0.5, 110 * s, 0.35);
+  drawRidge(
+    c,
+    [
+      [0, 0.25], [0.1, 0.5], [0.2, 0.3], [0.35, 0.55], [0.5, 0.25],
+      [0.65, 0.5], [0.8, 0.3], [0.9, 0.55], [1, 0.3],
+    ],
+    w * 1.1,
+    playableH * 0.62,
+    70 * s,
+    c.scroll * 0.08,
+    p.far,
+  );
+  drawGround(c, 'clay');
+  drawBirds(c, [
+    [0.25, 0.2, 4, 0.5],
+    [0.6, 0.16, 3, 0.4],
+  ]);
+  drawDatePalm(c, w * 0.85 - mod(c.scroll * 0.3, 90 * s), playableH * 0.83, 100 * s, 0.5);
 }

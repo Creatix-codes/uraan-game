@@ -149,7 +149,7 @@ function drawLahoreTower(
   drawTruckDiamonds(ctx, x, y, width, height, 'rgba(255,222,160,0.55)');
 }
 
-function drawKarachiTower(
+export function drawKarachiTower(
   ctx: Ctx,
   level: LevelConfig,
   x: number,
@@ -677,6 +677,56 @@ function drawFairyTower(
   }
 }
 
+function drawPeshawarTower(
+  ctx: Ctx,
+  level: LevelConfig,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  top: boolean,
+  s: number,
+): void {
+  const p = level.palette;
+  roundedPath(ctx, x, y, width, height, 6 * s);
+  ctx.save();
+  ctx.clip();
+  ctx.fillStyle = p.obstacle;
+  ctx.fillRect(x, y, width, height);
+  // Mud-brick courses like an old watchtower.
+  const brickH = 10 * s;
+  ctx.strokeStyle = 'rgba(90,52,30,0.4)';
+  ctx.lineWidth = 0.9 * s;
+  for (let row = 0; row < Math.ceil(height / brickH); row += 1) {
+    const by = y + row * brickH;
+    ctx.beginPath();
+    ctx.moveTo(x + 2 * s, by);
+    ctx.lineTo(x + width - 2 * s, by);
+    ctx.stroke();
+  }
+  ctx.restore();
+  roundedPath(ctx, x, y, width, height, 6 * s);
+  ctx.strokeStyle = p.ink;
+  ctx.lineWidth = 2.2 * s;
+  ctx.stroke();
+  const capY = top ? y + height - 24 * s : y;
+  capRect(ctx, x - 6 * s, capY, width + 12 * s, 24 * s, p.obstacleLight, p.ink, 5 * s);
+  ctx.fillStyle = p.obstacleDark;
+  for (let i = 0; i < 5; i += 1) {
+    const bx = x + 8 * s + i * ((width - 16 * s) / 4);
+    ctx.fillRect(bx, capY + (top ? 4 : 18) * s, 10 * s, 4 * s);
+  }
+  ctx.fillStyle = p.accent;
+  const flagX = x + width * 0.5;
+  const flagY = capY + (top ? 2 : 22) * s;
+  ctx.beginPath();
+  ctx.moveTo(flagX, flagY);
+  ctx.lineTo(flagX, flagY - 16 * s);
+  ctx.lineTo(flagX + 12 * s, flagY - 6 * s);
+  ctx.closePath();
+  ctx.fill();
+}
+
 function drawTower(
   ctx: Ctx,
   level: LevelConfig,
@@ -710,6 +760,12 @@ function drawTower(
       break;
     case 'skardu':
       drawSkarduTower(ctx, level, x, y, width, height, top, s);
+      break;
+    case 'peshawar':
+      drawPeshawarTower(ctx, level, x, y, width, height, top, s);
+      break;
+    case 'gwadar':
+      drawKarachiTower(ctx, level, x, y, width, height, top, s);
       break;
     case 'fairy-meadows':
       drawFairyTower(ctx, level, x, y, width, height, top, s);

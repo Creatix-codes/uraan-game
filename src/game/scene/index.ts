@@ -1,7 +1,13 @@
 import type { LevelConfig } from '../../types';
 import type { SceneContext } from './shared';
-import { drawFairyMeadowsScene, drawHunzaScene, drawSkarduScene, drawSwatScene } from './scenesB';
-import { drawIslamabadScene, drawKarachiScene, drawLahoreScene, drawMohenjoScene } from './scenesA';
+import { drawFairyMeadowsScene, drawHunzaScene, drawPeshawarScene, drawSkarduScene, drawSwatScene } from './scenesB';
+import {
+  drawGwadarScene,
+  drawIslamabadScene,
+  drawKarachiScene,
+  drawLahoreScene,
+  drawMohenjoScene,
+} from './scenesA';
 
 export interface SceneRenderer {
   resize(width: number, height: number, scale: number, groundHeight: number): void;
@@ -13,7 +19,7 @@ export interface SceneRenderer {
   ): void;
 }
 
-export function createScene(level: LevelConfig): SceneRenderer {
+export function createScene(level: LevelConfig, lowFx = false): SceneRenderer {
   let width = 360;
   let height = 640;
   let scale = 1;
@@ -40,6 +46,8 @@ export function createScene(level: LevelConfig): SceneRenderer {
         scroll,
         time,
         reducedMotion,
+        lowFx,
+        gradients: new Map<string, CanvasGradient>(),
       };
 
       switch (level.slug) {
@@ -66,6 +74,12 @@ export function createScene(level: LevelConfig): SceneRenderer {
           break;
         case 'fairy-meadows':
           drawFairyMeadowsScene(context);
+          break;
+        case 'peshawar':
+          drawPeshawarScene(context);
+          break;
+        case 'gwadar':
+          drawGwadarScene(context);
           break;
         default:
           drawLahoreScene(context);

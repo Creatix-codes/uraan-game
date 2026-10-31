@@ -8,7 +8,9 @@ export type LevelSlug =
   | 'swat'
   | 'hunza'
   | 'skardu'
-  | 'fairy-meadows';
+  | 'fairy-meadows'
+  | 'peshawar'
+  | 'gwadar';
 
 export interface LevelPalette {
   skyTop: string;

@@ -1,15 +1,18 @@
 import type { LevelConfig } from '../types';
-import type { SceneRenderer } from './scene';
 import { createScene } from './scene';
+import type { SceneRenderer } from './scene';
 import { drawObstaclePair } from './obstacles';
 import { drawCollectibleStar } from './star';
 import { drawParrot } from './parrot';
+import { isLowEndDevice, getCanvasDpr } from './perf';
 import {
   drawFloatingText,
+  drawFlame,
   drawParticles,
   makeConfetti,
   makeDustPuff,
   makeFeatherBurst,
+  makeFlameTrail,
   makeStarBurst,
   updateParticles,
   type FloatingText,
@@ -85,6 +88,8 @@ export class GameEngine {
   private readonly level: LevelConfig;
   private readonly callbacks: EngineCallbacks;
   private readonly scene: SceneRenderer;
+  private readonly lowEnd: boolean;
+  private lowFx: boolean;
   private reducedMotion = false;
 
   private width = 360;
@@ -130,7 +135,7 @@ export class GameEngine {
   private shakeUntil = 0;
   private shakeStrength = 0;
   private flashUntil = 0;
-  private lastHudAt = -1;
+  private lastHudKey = '';
   private hasEnded = false;
   private landed = false;
   private vignette: CanvasGradient | null = null;
@@ -142,7 +147,9 @@ export class GameEngine {
     this.ctx = ctx;
     this.level = level;
     this.callbacks = callbacks;
-    this.scene = createScene(level);
+    this.lowEnd = isLowEndDevice();
+    this.lowFx = this.lowEnd;
+    this.scene = createScene(level, this.lowFx);
     if (typeof window !== 'undefined' && window.matchMedia) {
       this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
@@ -171,7 +178,7 @@ export class GameEngine {
     this.scale = clamp(Math.min(width / 360, height / 640), 0.7, 1.5);
     this.groundHeight = 62 * this.scale;
     this.playableHeight = height - this.groundHeight;
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.dpr = getCanvasDpr(this.lowEnd);
     this.canvas.width = Math.round(width * this.dpr);
     this.canvas.height = Math.round(height * this.dpr);
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
@@ -393,6 +400,13 @@ export class GameEngine {
     if (this.phase !== 'playing') return;
     this.collectStars();
     this.checkBoundaries();
+
+    // Jetpack exhaust trail while climbing — a burst of flame particles.
+    if (this.phase === 'playing' && this.parrot.vy < -120 * this.scale) {
+      this.particles.push(
+        ...makeFlameTrail(this.parrot.x - 20 * this.scale, this.parrot.y - 4 * this.scale, this.scale, this.level),
+      );
+    }
 
     this.obstacles = this.obstacles.filter((obstacle) => obstacle.x + obstacle.width > -30 * this.scale);
     this.collectibles = this.collectibles.filter(
@@ -636,16 +650,19 @@ export class GameEngine {
   }
 
   private emitHud(force = false): void {
-    if (!force && this.time - this.lastHudAt < 0.08) return;
-    this.lastHudAt = this.time;
+    const progress = clamp(this.travelled / Math.max(1, this.targetPx), 0, 1);
+    const distance = Math.min(
+      this.level.lengthMeters,
+      Math.round(this.travelled / Math.max(1, this.distanceUnit)),
+    );
+    const key = `${this.phase}|${this.hearts}|${this.starsCollected}|${distance}|${progress.toFixed(3)}`;
+    if (!force && key === this.lastHudKey) return;
+    this.lastHudKey = key;
     this.callbacks.onHud({
-      progress: clamp(this.travelled / Math.max(1, this.targetPx), 0, 1),
+      progress,
       hearts: this.hearts,
       stars: this.starsCollected,
-      distance: Math.min(
-        this.level.lengthMeters,
-        Math.round(this.travelled / Math.max(1, this.distanceUnit)),
-      ),
+      distance,
       phase: this.phase,
     });
   }
@@ -777,6 +794,18 @@ export class GameEngine {
       blink,
       alpha: this.phase === 'defeat' || flicker ? 0.65 : 1,
     });
+
+    // Jetpack-style exhaust flame while Uraan climbs.
+    if (this.phase === 'playing') {
+      drawFlame(
+        ctx,
+        this.parrot.x - 26 * this.scale,
+        this.parrot.y - 8 * this.scale,
+        16 * this.scale,
+        this.wingAngle * 0.5,
+        this.wingEnergy,
+      );
+    }
     ctx.restore();
   }
 }

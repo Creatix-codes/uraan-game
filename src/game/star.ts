@@ -1,3 +1,4 @@
+import { cachedGradient } from './gradients';
 import type { LevelConfig } from '../types';
 
 export function drawCollectibleStar(
@@ -43,10 +44,13 @@ export function drawCollectibleStar(
     else ctx.lineTo(px, py);
   }
   ctx.closePath();
-  const gold = ctx.createLinearGradient(-r, -r, r, r);
-  gold.addColorStop(0, '#ffeaa6');
-  gold.addColorStop(0.45, palette.accent);
-  gold.addColorStop(1, '#e59234');
+  const gold = cachedGradient(ctx, `star-gold|${r.toFixed(3)}`, () => {
+    const g = ctx.createLinearGradient(-r, -r, r, r);
+    g.addColorStop(0, '#ffeaa6');
+    g.addColorStop(0.45, palette.accent);
+    g.addColorStop(1, '#e59234');
+    return g;
+  });
   ctx.fillStyle = gold;
   ctx.fill();
   ctx.strokeStyle = palette.ink;

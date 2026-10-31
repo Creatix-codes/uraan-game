@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { TOTAL_LEVELS } from '../data/levels';
 
 interface GameShellProps {
   children: ReactNode;
@@ -27,7 +28,7 @@ export function GameShell({ children }: GameShellProps) {
         </div>
         <p className="desktop-note">
           <span className="desktop-note__rule" aria-hidden="true" />
-          Eight postcards from Pakistan
+          {TOTAL_LEVELS} postcards from Pakistan
           <span className="desktop-note__rule" aria-hidden="true" />
         </p>
       </div>

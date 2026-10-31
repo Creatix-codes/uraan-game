@@ -1,14 +1,14 @@
 # Uraan-e-Pakistan
 
-A complete, browser-playable Flappy Bird–inspired adventure through eight Pakistani destinations, painted in a contemporary truck-art style. Guide Uraan the parrot from the Badshahi Mosque to Nanga Parbat, collect golden stars and fill a postcard album.
+A complete, browser-playable Flappy Bird–inspired adventure through ten Pakistani destinations, painted in a contemporary truck-art style. Guide Uraan the parrot from the Badshahi Mosque to Nanga Parbat, collect golden stars and fill a postcard album.
 
 ## Features
 
-- **Eight original destinations** — Lahore, Karachi, Mohenjo-Daro, Islamabad, Swat, Hunza, Skardu and Fairy Meadows, each with its own palette, parallax landscape and landmark art.
+- **Ten original destinations** — Lahore, Karachi, Mohenjo-Daro, Islamabad, Swat, Hunza, Skardu, Fairy Meadows, Peshawar and Gwadar, each with its own palette, parallax landscape and landmark art.
 - **Hand-built canvas world** — delta-time flight physics, environment-themed obstacles, animated stars, particles, screen shake and a smooth parallax camera.
 - **Animated parrot** — SVG mascot on the home screen and a fully canvas-drawn parrot in flight, with wing flaps, blinking, tilt and feather accents.
 - **Forgiving flight** — generous obstacle gaps, three hearts, collision bounce, invulnerability frames and short routes.
-- **Progression** — stars, best scores, 24 total star ratings, postcard collection, automatic level unlocking and private `localStorage` persistence.
+- **Progression** — stars, best scores, 30 total star ratings, postcard collection, automatic level unlocking and private `localStorage` persistence.
 - **First-flight tutorial**, pause panel, restart, victory celebration and defeat recovery.
 - **Original audio** — a lightweight Web Audio courtyard melody and synthesized sound effects, unlocked only after the first tap or key press.
 - **Responsive portrait layout** — a framed 9:16 device on desktop with a painted backdrop; edge-to-edge play with safe-area support on phones.

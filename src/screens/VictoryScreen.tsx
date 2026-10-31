@@ -163,7 +163,7 @@ export function VictoryScreen({
               <Icon name="trophy" size={21} strokeWidth={1.8} />
             </span>
             <span className="next-route__copy">
-              <small>All eight postcards collected</small>
+              <small>All {TOTAL_LEVELS} postcards collected</small>
               <strong>The whole journey is yours.</strong>
             </span>
             <Icon name="star" size={19} strokeWidth={1.8} />

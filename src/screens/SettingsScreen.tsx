@@ -96,7 +96,7 @@ export function SettingsScreen({
                 <Icon name="star" size={19} strokeWidth={1.8} />
               </span>
               <span>
-                <strong>{stars} of 24</strong>
+                <strong>{stars} of {TOTAL_LEVELS * 3}</strong>
                 <small>Stars collected</small>
               </span>
             </div>

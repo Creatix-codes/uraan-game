@@ -39,7 +39,7 @@ export function MapScreen({ progress, onBack, onPlay, onSettings, onPostcards }:
       <header className="screen-head">
         <IconButton icon="arrow-left" label="Back to home" variant="cream" size="sm" onClick={onBack} />
         <div className="screen-head__title">
-          <span>Eight postcards await</span>
+          <span>{TOTAL_LEVELS} postcards await</span>
           <h1>The Flight Map</h1>
         </div>
         <div className="screen-head__actions">
@@ -62,7 +62,7 @@ export function MapScreen({ progress, onBack, onPlay, onSettings, onPostcards }:
             </span>
             <span>
               <strong>{stars}</strong>
-              <small>of 24 stars</small>
+              <small>of {TOTAL_LEVELS * 3} stars</small>
             </span>
           </div>
           <span className="map-summary__split" aria-hidden="true" />
@@ -72,7 +72,7 @@ export function MapScreen({ progress, onBack, onPlay, onSettings, onPostcards }:
             </span>
             <span>
               <strong>{completed}</strong>
-              <small>of 8 postcards</small>
+              <small>of {TOTAL_LEVELS} postcards</small>
             </span>
           </div>
           <span className="map-summary__split" aria-hidden="true" />

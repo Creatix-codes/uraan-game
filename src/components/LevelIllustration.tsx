@@ -61,6 +61,8 @@ export function LevelIllustration({ level, className = '' }: LevelIllustrationPr
         {level.slug === 'hunza' ? <HunzaScene level={level} /> : null}
         {level.slug === 'skardu' ? <SkarduScene level={level} /> : null}
         {level.slug === 'fairy-meadows' ? <FairyMeadowsScene level={level} /> : null}
+        {level.slug === 'peshawar' ? <PeshawarScene level={level} /> : null}
+        {level.slug === 'gwadar' ? <GwadarScene level={level} /> : null}
 
         {/* Painted postcard frame and light wash keep all eight posters cohesive. */}
         <rect
@@ -536,6 +538,75 @@ function FairyMeadowsScene({ level }: SceneProps) {
       <g fill="#f5f2df" opacity="0.8">
         <path d="M172 156c6-8 13-11 21-10-5 8-11 12-18 13Z" />
         <circle cx="185" cy="147" r="1.3" fill={p.accent} />
+      </g>
+    </g>
+  );
+}
+
+function PeshawarScene({ level }: SceneProps) {
+  const p = level.palette;
+  return (
+    <g>
+      {/* Dusty Gandhara ridge */}
+      <path d="M0 126c40-32 72-36 108-20 42 16 78 10 112-6v76H0Z" fill="#c98d5f" />
+      <path d="M0 132c30-20 62-22 92-12 36 10 68 7 98-8v60H0Z" fill="#a86b45" />
+
+      {/* Frontier watchtower */}
+      <g>
+        <rect x="88" y="58" width="92" height="94" fill="#c07a45" />
+        <rect x="88" y="58" width="92" height="12" fill="#e0a468" />
+        <path d="M82 58h104v14H82Z" fill="#7c4a2c" />
+        <path d="M94 44h80v16H94Z" fill="#e0a468" />
+        <path d="M102 30h64v16H102Z" fill="#7c4a2c" />
+        <rect x="130" y="20" width="6" height="18" fill={p.accent} />
+        <path d="M133 20l12-5v12z" fill={p.accentSoft} />
+        <rect x="100" y="74" width="60" height="6" fill="#7c4a2c" opacity="0.6" />
+        <rect x="108" y="90" width="44" height="6" fill="#7c4a2c" opacity="0.6" />
+      </g>
+
+      {/* Date palm */}
+      <g stroke={p.ink} strokeWidth="2" fill="none" strokeLinecap="round">
+        <path d="M252 148c8-22 12-38 12-56" />
+        <path d="M252 92c-14-6-22-16-24-30" />
+        <path d="M252 92c14-6 22-16 24-30" />
+        <path d="M252 92c0-16-4-30-12-42" />
+        <path d="M252 92c-2-16 2-30 12-42" />
+      </g>
+
+      {/* Ground */}
+      <path d="M0 164c50-8 100-8 160-2v34H0Z" fill={p.groundTop} />
+      <path d="M0 178c60-5 110-5 170-2v14H0Z" fill={p.groundBottom} />
+      <g fill={p.accent}>
+        <circle cx="60" cy="172" r="1.6" />
+        <circle cx="250" cy="170" r="1.4" />
+      </g>
+    </g>
+  );
+}
+
+function GwadarScene({ level }: SceneProps) {
+  const p = level.palette;
+  return (
+    <g>
+      {/* Arabian sea */}
+      <path d="M0 132h320v68H0Z" fill="#2f8e97" />
+      <path d="M0 144c26-8 50 8 77 0s49 5 76 0 48 7 76 0 53 2 91-2v14c-32 5-61-3-91 1s-50-5-76 0-51-7-77-1-52-6-76 1Z" fill="#72c1c2" opacity="0.55" />
+
+      {/* Coastal lighthouse */}
+      <g>
+        <rect x="238" y="66" width="16" height="100" fill="#f0ead9" />
+        <path d="M234 64h24v8H234Z" fill="#2a7f83" />
+        <rect x="242" y="40" width="4" height="26" fill="#2a7f83" />
+        <path d="M246 40l10-5v12z" fill={p.accent} />
+        <circle cx="250" cy="38" r="3" fill="#fff3c4" />
+      </g>
+
+      {/* Beach */}
+      <path d="M0 176c50-8 100-8 160-2v34H0Z" fill={p.groundTop} />
+      <path d="M0 190c60-5 110-5 170-2v14H0Z" fill={p.groundBottom} />
+      <g fill="#ffffff" opacity="0.5">
+        <ellipse cx="90" cy="188" rx="12" ry="4" />
+        <ellipse cx="200" cy="192" rx="9" ry="3.4" />
       </g>
     </g>
   );

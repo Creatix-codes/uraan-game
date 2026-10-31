@@ -31,7 +31,7 @@ export function HomeScreen({
   const allDone = completed >= TOTAL_LEVELS;
   const continueLevel = getLevel(getContinueLevelId(progress));
   const nextLabel = allDone
-    ? 'All eight postcards are in your album'
+    ? `All ${TOTAL_LEVELS} postcards are in your album`
     : completed === 0
       ? `First stop · ${continueLevel.city}`
       : `Next stop · ${continueLevel.city}, ${continueLevel.region}`;
@@ -147,7 +147,7 @@ export function HomeScreen({
             </span>
             <span className="home-stat__value">
               {stars}
-              <small>/24</small>
+              <small>/{TOTAL_LEVELS * 3}</small>
             </span>
             <span className="home-stat__label">Stars</span>
           </div>
@@ -163,7 +163,7 @@ export function HomeScreen({
       </main>
 
       <footer className="home-footer">
-        <span>Eight destinations</span>
+        <span>{TOTAL_LEVELS} destinations</span>
         <span className="home-footer__dot" aria-hidden="true" />
         <span>One unforgettable flight</span>
       </footer>

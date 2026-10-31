@@ -25,7 +25,7 @@ export function PostcardGallery({ open, progress, onClose }: PostcardGalleryProp
       className="album-modal"
     >
       <p className="album-intro">
-        Every finished flight earns a hand-painted postcard. Complete all eight routes to fill the album.
+        Every finished flight earns a hand-painted postcard. Complete all {LEVELS.length} routes to fill the album.
       </p>
       <div className="album-grid">
         {LEVELS.map((level) => {
